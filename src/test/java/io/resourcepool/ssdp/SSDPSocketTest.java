@@ -8,6 +8,7 @@ import io.resourcepool.ssdp.model.SsdpService;
 import io.resourcepool.ssdp.model.SsdpServiceAnnouncement;
 import org.junit.Test;
 
+import java.net.SocketException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -24,7 +25,7 @@ public class SSDPSocketTest {
    * @throws InterruptedException
    */
   @Test
-  public void testSSDPReceive() throws InterruptedException {
+  public void testSSDPReceive() throws InterruptedException, SocketException {
     final CountDownLatch lock = new CountDownLatch(1);
     
     SsdpClient client = SsdpClient.create();

@@ -94,7 +94,7 @@ public class SsdpClientImpl extends SsdpClient {
   }
 
   @Override
-  public void discoverServices(DiscoveryRequest req, final DiscoveryListener callback) {
+  public void discoverServices(DiscoveryRequest req, final DiscoveryListener callback, List<NetworkInterface> networkInterfaces) {
     if (State.ACTIVE.equals(state)) {
       callback.onFailed(new IllegalStateException("Another discovery is in progress. Stop the first discovery before starting a new one."));
       return;
@@ -102,6 +102,7 @@ public class SsdpClientImpl extends SsdpClient {
     // Reset attributes
     reset(req, callback);
     // Open and bind client socket to send / receive datagrams
+    interfaces = networkInterfaces;
     openAndBindSocket();
 
     // Send UDP Discover Request Datagrams at a fixed rate
@@ -185,7 +186,7 @@ public class SsdpClientImpl extends SsdpClient {
   private void openAndBindSocket() {
     try {
       this.clientSocket = new MulticastSocket();
-      interfaces = Utils.getMulticastInterfaces();
+      //interfaces = Utils.getMulticastInterfaces();
       joinGroupOnAllInterfaces(SsdpParams.getSsdpMulticastAddress());
     } catch (IOException e) {
       callback.onFailed(e);

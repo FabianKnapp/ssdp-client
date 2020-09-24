@@ -2,6 +2,7 @@ package io.resourcepool.ssdp.client.util;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -20,7 +21,7 @@ public abstract class Utils {
    * @throws SocketException if something bad happens
    * @return list of interfaces
    */
-  public static List<NetworkInterface> getMulticastInterfaces() throws SocketException {
+  public static List<NetworkInterface> getRemoteMulticastInterfaces() throws SocketException {
     List<NetworkInterface> viableInterfaces = new ArrayList<NetworkInterface>();
     Enumeration e = NetworkInterface.getNetworkInterfaces();
     while (e.hasMoreElements()) {
@@ -31,6 +32,23 @@ public abstract class Utils {
         if (i.isSiteLocalAddress() && !i.isAnyLocalAddress() && !i.isLinkLocalAddress()
             && !i.isLoopbackAddress() && !i.isMulticastAddress()) {
           viableInterfaces.add(NetworkInterface.getByName(n.getName()));
+        }
+      }
+    }
+    return viableInterfaces;
+  }
+
+  public static List<NetworkInterface> getLoopbackMulticastInterfaces() throws SocketException {
+    List<NetworkInterface> viableInterfaces = new ArrayList<NetworkInterface>();
+    Enumeration e = NetworkInterface.getNetworkInterfaces();
+    while (e.hasMoreElements()) {
+      NetworkInterface n = (NetworkInterface) e.nextElement();
+      Enumeration ee = n.getInetAddresses();
+      while (ee.hasMoreElements()) {
+        InetAddress i = (InetAddress) ee.nextElement();
+        if (i.isLoopbackAddress()) {
+          viableInterfaces.add(NetworkInterface.getByName(n.getName()));
+          return viableInterfaces;
         }
       }
     }
